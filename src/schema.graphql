@@ -1,0 +1,17 @@
+type Query {
+    movies(query: String): [Movie!]!
+    actors: [Actor!]!
+}
+
+type Movie {
+    id: ID!
+    title: String!
+    released: Boolean
+    actors: [Actor!]
+}
+
+type Actor {
+    id: ID!
+    name: String!
+    movie: [Movie]!
+}

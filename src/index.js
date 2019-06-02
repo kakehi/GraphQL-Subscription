@@ -37,26 +37,6 @@ const actors = [{
     movie: '2'
 }]
 
-// Type definition (Schema)
-const typeDefs = `
-    type Query {
-        movies(query: String): [Movie!]!
-        actors: [Actor!]!
-    }
-    
-    type Movie {
-        id: ID!
-        title: String!
-        released: Boolean
-        actors: [Actor!]
-    }
-
-    type Actor {
-        id: ID!
-        name: String!
-        movie: [Movie]!
-    }
-`
 // Resolvers
 const resolvers = {
     Query: {
@@ -101,10 +81,10 @@ const resolvers = {
 
 
 const server = new GraphQLServer({
-    typeDefs,
+    typeDefs: './src/schema.graphql',
     resolvers
 })
 
 server.start(()=>{
-    console.log('The server is')
+    console.log('The server is up and running on 4000')
 })
