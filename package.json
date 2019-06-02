@@ -1,0 +1,22 @@
+{
+  "name": "graphql-mutation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js --ext js,graphql --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "graphql-yoga": "^1.17.4",
+    "uuid": "^3.3.2"
+  },
+  "dependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
