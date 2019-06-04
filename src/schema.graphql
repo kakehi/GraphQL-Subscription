@@ -3,15 +3,32 @@ type Query {
     actors: [Actor!]!
 }
 
+type Mutation {
+    createMovie(data: CreateMovieInput!): Movie!
+    createActor(data: CreateActorInput!): Actor!
+}
+
 type Movie {
     id: ID!
     title: String!
-    released: Boolean
+    released: Boolean!
     actors: [Actor!]
+}
+
+input CreateMovieInput {
+    title: String!
+    released: Boolean!
 }
 
 type Actor {
     id: ID!
     name: String!
-    movie: [Movie]!
+    agent: String
+    movie: [Movie]
+}
+
+input CreateActorInput {
+    name: String!
+    agent: String
+    movie: ID
 }
