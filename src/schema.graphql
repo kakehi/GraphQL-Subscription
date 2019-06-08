@@ -5,6 +5,7 @@ type Query {
 
 type Mutation {
     createMovie(data: CreateMovieInput!): Movie!
+    updateMovie(id: ID!, data: UpdateMovieInput!): Movie!
     deleteMovie(id: ID!): Movie!
     createActor(data: CreateActorInput!): Actor!
     deleteActor(id: ID!): Actor!
@@ -20,6 +21,11 @@ type Movie {
 input CreateMovieInput {
     title: String!
     released: Boolean!
+}
+
+input UpdateMovieInput {
+    title: String
+    released: Boolean
 }
 
 type Actor {

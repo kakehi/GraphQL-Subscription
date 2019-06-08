@@ -2,11 +2,11 @@ import uuidv4 from 'uuid/v4'
 
 const Mutation = {
     
-    createMovie(parent, args, { db }, info) {
+    createMovie(parent, { data }, { db }, info) {
         
         // Check if the movie title already exists. If so, throw an error due to duplication.
         const movieTitleTaken = db.movies.some((movie) => {
-           return movie.title.toLowerCase() === args.data.title.toLowerCase()
+           return movie.title.toLowerCase() === data.title.toLowerCase()
         })
 
         if(movieTitleTaken){
@@ -16,7 +16,7 @@ const Mutation = {
         // Creating a new movie constant which comprises of arguments passed from the mutation operator.
         const movie = {
             id: uuidv4(),
-            ...args.data
+            ...data
         }
 
         db.movies.push(movie)
@@ -24,10 +24,39 @@ const Mutation = {
         return movie
     },
 
-    deleteMovie(parent, args, { db }, info){
+    updateMovie(parent, { id, data }, { db }, info){
+
+        const movie = db.movies.find((movie) => movie.id === id )
+
+        if(!movie){
+            throw new Error('User not found')
+        }
+
+        const movieTitleTaken = db.movies.some((movie) => {
+            return movie.title.toLowerCase() === data.title.toLowerCase()
+         })
+
+        if(movieTitleTaken){
+            throw new Error('This movie title exists.')
+        }
+
+        // Update the movie title, if the new title is not null
+        if(typeof data.title === 'string'){
+            movie.title = data.title
+        }
+
+        // Update the movie release boolean, if the new boolean is not null
+        if(typeof data.released === 'boolean'){
+            movie.released = data.released
+        } 
+        
+        return movie
+    },
+
+    deleteMovie(parent, { id }, { db }, info){
 
         // First, check if the movie ID exists. If it doesn't throw an error.
-        const movieIndex = db.movies.findIndex((movie) => movie.id === args.id)
+        const movieIndex = db.movies.findIndex((movie) => movie.id === id)
 
         if(movieIndex === -1){
             throw new Error('Movie does not found')
@@ -37,21 +66,19 @@ const Mutation = {
         const deletedMovies = db.movies.splice(movieIndex, 1)
 
         db.actors.forEach((actor) => {
-            actor.movie.forEach((movie) => {
-                if(movie === args.id){
-                    movie = null
-                }
-            })
+            if(actor.movie === id){
+                actor.movie = null
+            }
         })
 
         return deletedMovies[0]
     },
 
-    createActor(parent, args, { db }, info) {
+    createActor(parent, { data }, { db }, info) {
         
         // Check if the actor name and agent name have existed together for another instance. If so, throw an error due to duplication.
         const actorNameTaken = db.actors.some((actor) => {
-           return actor.name.toLowerCase() === args.data.name.toLowerCase() && actor.agent.toLowerCase() === args.data.agent.toLowerCase()
+           return actor.name.toLowerCase() === data.name.toLowerCase() && actor.agent.toLowerCase() === data.agent.toLowerCase()
         })
 
         if(actorNameTaken){
@@ -61,7 +88,7 @@ const Mutation = {
         // Creating a new actor constant which comprises of arguments passed from the mutation operator.
         const actor = {
             id: uuidv4(),
-            ...args.data
+            ...data
         }
 
         db.actors.push(actor)
@@ -69,10 +96,10 @@ const Mutation = {
         return actor
     },
 
-    deleteActor(parent, args, { db }, info){
+    deleteActor(parent, { id }, { db }, info){
 
         // First, check if the actor ID exists. If it doesn't throw an error.
-        const actorIndex = db.actors.findIndex((actor) => actor.id === args.id)
+        const actorIndex = db.actors.findIndex((actor) => actor.id === id)
 
         if(actorIndex === -1){
             throw new Error('Actor does not found')
