@@ -12,6 +12,11 @@ type Mutation {
     deleteActor(id: ID!): Actor!
 }
 
+
+type Subscription {
+    movie(id: ID!): Movie!
+}
+
 type Movie {
     id: ID!
     title: String!
