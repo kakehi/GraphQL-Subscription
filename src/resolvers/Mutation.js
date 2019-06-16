@@ -29,7 +29,7 @@ const Mutation = {
         const movie = db.movies.find((movie) => movie.id === id )
 
         if(!movie){
-            throw new Error('User not found')
+            throw new Error('Movie not found')
         }
 
         const movieTitleTaken = db.movies.some((movie) => {
@@ -45,7 +45,7 @@ const Mutation = {
             movie.title = data.title
         }
 
-        // Update the movie release boolean, if the new boolean is not null
+        // Update the movie release, if the new released is not null
         if(typeof data.released === 'boolean'){
             movie.released = data.released
         } 
@@ -96,6 +96,31 @@ const Mutation = {
         return actor
     },
 
+    updateActor(parent, { id, data }, { db }, info){
+
+        const actor = db.actors.find((actor) => actor.id === id )
+
+        if(!actor){
+            throw new Error('Actor not found')
+        }
+
+        // Update the actor name, if the new actor is not null
+        if(typeof data.name === 'string'){
+            actor.name = data.name
+        }
+
+        // Update the actor's agent, if the new agent is not null
+        if(typeof data.agent === 'string'){
+            actor.agent = data.agent
+        } 
+
+        // Update the actor's movie, if the new movie is not null
+        if(typeof data.movie === 'string'){
+            actor.movie = data.movie
+        } 
+        
+        return actor
+    },
     deleteActor(parent, { id }, { db }, info){
 
         // First, check if the actor ID exists. If it doesn't throw an error.

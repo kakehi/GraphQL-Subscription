@@ -8,6 +8,7 @@ type Mutation {
     updateMovie(id: ID!, data: UpdateMovieInput!): Movie!
     deleteMovie(id: ID!): Movie!
     createActor(data: CreateActorInput!): Actor!
+    updateActor(id: ID!, data: UpdateActorInput!): Actor!
     deleteActor(id: ID!): Actor!
 }
 
@@ -37,6 +38,12 @@ type Actor {
 
 input CreateActorInput {
     name: String!
+    agent: String
+    movie: ID
+}
+
+input UpdateActorInput {
+    name: String
     agent: String
     movie: ID
 }
