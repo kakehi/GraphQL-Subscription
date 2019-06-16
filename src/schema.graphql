@@ -14,7 +14,7 @@ type Mutation {
 
 
 type Subscription {
-    movie(id: ID!): Movie!
+    movie(movieId: ID!): Movie!
 }
 
 type Movie {
