@@ -2,7 +2,7 @@ import uuidv4 from 'uuid/v4'
 
 const Mutation = {
     
-    createMovie(parent, { data }, { db }, info) {
+    createMovie(parent, { data }, { db, pubsub }, info) {
         
         // Check if the movie title already exists. If so, throw an error due to duplication.
         const movieTitleTaken = db.movies.some((movie) => {
@@ -20,6 +20,14 @@ const Mutation = {
         }
 
         db.movies.push(movie)
+        if( data.released ){
+            pubsub.publish("movie", {
+                movie: {
+                    mutation: 'CREATED',
+                    data: movie
+                }
+            })
+        }
 
         return movie
     },

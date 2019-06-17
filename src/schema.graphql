@@ -14,7 +14,12 @@ type Mutation {
 
 
 type Subscription {
-    movie(movieId: ID!): Movie!
+    movie: MovieSubscriptionPayload!
+}
+
+type MovieSubscriptionPayload {
+    mutation: String!
+    data: Movie!
 }
 
 type Movie {
