@@ -20,14 +20,14 @@ const Mutation = {
         }
 
         db.movies.push(movie)
-        if( data.released ){
-            pubsub.publish("movie", {
-                movie: {
-                    mutation: 'CREATED',
-                    data: movie
-                }
-            })
-        }
+        
+        pubsub.publish("movie", {
+            movie: {
+                mutation: 'CREATED',
+                data: movie
+            }
+        })
+        
 
         return movie
     },
@@ -35,6 +35,7 @@ const Mutation = {
     updateMovie(parent, { id, data }, { db }, info){
 
         const movie = db.movies.find((movie) => movie.id === id )
+        const originalMovie = { ...movie }
 
         if(!movie){
             throw new Error('Movie not found')
@@ -56,22 +57,48 @@ const Mutation = {
         // Update the movie release, if the new released is not null
         if(typeof data.released === 'boolean'){
             movie.released = data.released
-        } 
+            
+            if(originalMovie.released && !movie.released){
+                // The movie was just unreleased
+                pubsub.publish("movie", {
+                    movie: {
+                        mutation: 'CREATED',
+                        data: movie
+                    }
+                })
+            } else if (!originalMovie.released && movie.released ){
+                // The movie was just released
+                pubsub.publish("movie", {
+                    movie: {
+                        mutation: 'DELETED',
+                        data: movie
+                    }
+                })
+            }
+        } else if ( movie.released ) {
+            // No new boolean was passed, so only information is updated.
+            pubsub.publish("movie", {
+                movie: {
+                    mutation: 'UPDATED',
+                    data: movie
+                }
+            })
+        }
         
         return movie
     },
 
-    deleteMovie(parent, { id }, { db }, info){
+    deleteMovie(parent, { id }, { db, pubsub }, info){
 
         // First, check if the movie ID exists. If it doesn't throw an error.
-        const movieIndex = db.movies.findIndex((movie) => movie.id === id)
+        const movieIndex = db.movies.findIndex((movie) => movie.id == id)
 
         if(movieIndex === -1){
-            throw new Error('Movie does not found')
+            throw new Error('Movie not found')
         }
 
         // Update the movie array.
-        const deletedMovies = db.movies.splice(movieIndex, 1)
+        const [deletedMovie] = db.movies.splice(movieIndex, 1)
 
         db.actors.forEach((actor) => {
             if(actor.movie === id){
@@ -79,7 +106,14 @@ const Mutation = {
             }
         })
 
-        return deletedMovies[0]
+        pubsub.publish("movie", {
+            movie: {
+                mutation: 'DELETED',
+                data: deletedMovie
+            }
+        })
+
+        return deletedMovie
     },
 
     createActor(parent, { data }, { db }, info) {

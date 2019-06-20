@@ -46,6 +46,11 @@ type Actor {
     movie: [Movie]
 }
 
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
+}
 input CreateActorInput {
     name: String!
     agent: String
